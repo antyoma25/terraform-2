@@ -58,10 +58,10 @@ resource "aws_route_table" "public_route_table" {
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.vpc.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    # gateway_id     = aws_internet_gateway.internet_gateway.id
-  }
+  # route {
+  #   cidr_block = "0.0.0.0/0"
+  #   # gateway_id     = aws_internet_gateway.internet_gateway.id
+  # }
   tags = {
     Name      = "demo_private_rtb"
     Terraform = "true"
@@ -88,5 +88,34 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name = "demo_igw"
+  }
+}
+
+# #Create EIP for NAT Gateway
+# resource "aws_eip" "nat_gateway_eip" {
+#   domain     = "vpc"
+#   depends_on = [aws_internet_gateway.internet_gateway]
+#   tags = {
+#     Name = "demo_igw_eip"
+#   }
+# }
+
+# #Create NAT Gateway
+# resource "aws_nat_gateway" "nat_gateway" {
+#   depends_on    = [aws_subnet.public_subnets]
+#   allocation_id = aws_eip.nat_gateway_eip.id
+#   subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id
+#   tags = {
+#     Name = "demo_nat_gateway"
+#   }
+# }
+
+resource "aws_instance" "web" {
+  ami                    = "ami-00ca32bbc84273381"
+  instance_type          = "t2.micro"
+  subnet_id              = "subnet-0888b5072043c53f7"
+  vpc_security_group_ids = ["sg-041256d4bf476a2cf"]
+  tags = {
+    "Terraform" = "true"
   }
 }
