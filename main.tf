@@ -2,6 +2,12 @@
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
 
+locals {
+  team        = "api_mgmt_dev"
+  application = "corp_api"
+  server_name = "ec2-${var.environment}-api-${var.variables_sub_az}"
+}
+
 #Define the VPC
 resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_cidr
@@ -111,27 +117,29 @@ resource "aws_internet_gateway" "internet_gateway" {
 # }
 
 resource "aws_instance" "web" {
-  ami                    = "ami-00ca32bbc84273381"
-  instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.public_subnets["public_subnet_1"].id
+  ami           = "ami-00bbc84273381"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id
   tags = {
-    "Name" = "Web EC2 Server"
+    Name  = local.server_name
+    Owner = local.team
+    App   = local.application
   }
 }
 
-resource "aws_s3_bucket" "my-new-S3-bucket" {   
+resource "aws_s3_bucket" "my-new-S3-bucket" {
   bucket = "my-new-tf-test-bucket-antyoma-${random_id.randomness.hex}"
 
-  tags = {     
-    Name = "My S3 Bucket"     
-    Purpose = "Intro to Resource Blocks Lab"   
-  } 
+  tags = {
+    Name    = "My S3 Bucket"
+    Purpose = "Intro to Resource Blocks Lab"
+  }
 }
 
-resource "aws_s3_bucket_ownership_controls" "my_new_bucket_acl" {   
-  bucket = aws_s3_bucket.my-new-S3-bucket.id  
-  rule {     
-    object_ownership = "BucketOwnerPreferred"   
+resource "aws_s3_bucket_ownership_controls" "my_new_bucket_acl" {
+  bucket = aws_s3_bucket.my-new-S3-bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
