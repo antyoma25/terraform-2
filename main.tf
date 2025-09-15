@@ -354,3 +354,15 @@ resource "aws_instance" "web_server" {
   }
 
 }
+
+/* 
+# Para importar una instancia creada desde la consola de EC2(primero se crea el recurso y pasan los datos minimos, luego se hace un terraform import con el nombre del recurso y ID de la instancia, luego terraform plan y apply)
+resource "aws_instance" "aws_linux_imported" {
+  instance_type = "t2.micro"
+  ami           = "ami-0b09ffb6d8b58ca91"
+  tags = {
+    Name        = "test-terraform-2"
+    Environment = "dev"
+  }
+}
+*/
