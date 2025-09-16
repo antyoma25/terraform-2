@@ -3,15 +3,28 @@ Create By: Anthony Matheus
 Description: Learning Infrastructure as code with Terraform
 */
 
+provider "aws" {
+  region = "us-east-1"
+  default_tags {
+    tags = {
+      Owner = "Acme"
+      Provisioned = "Terraform"
+    }
+  }
+  
+}
+
 #Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
 
+/*
 locals {
   team        = "api_mgmt_dev"
   application = "corp_api"
   server_name = "ec2-${var.environment}-api-${var.variables_sub_az}"
 }
+*/
 
 #Define the VPC
 resource "aws_vpc" "vpc" {
@@ -138,7 +151,7 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"]
 }
-
+/*
 resource "aws_instance" "ubuntu_server" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro"
@@ -175,7 +188,9 @@ resource "aws_instance" "ubuntu_server" {
     ignore_changes = [key_name]
   }
 }
+*/
 
+/*
 resource "aws_s3_bucket" "my-new-S3-bucket" {
   bucket = "my-new-tf-test-bucket-antyoma-${random_id.randomness.hex}"
 
@@ -316,7 +331,8 @@ resource "aws_security_group" "vpc-ping" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
+*/
+/*
 # Terraform Resource Block - To Build Web Server in Public Subnet
 resource "aws_instance" "web_server" {
   ami           = data.aws_ami.ubuntu.id
@@ -354,9 +370,11 @@ resource "aws_instance" "web_server" {
   }
 
 }
+*/
 
 /* 
 # Para importar una instancia creada desde la consola de EC2(primero se crea el recurso y pasan los datos minimos, luego se hace un terraform import con el nombre del recurso y ID de la instancia, luego terraform plan y apply)
+
 resource "aws_instance" "aws_linux_imported" {
   instance_type = "t2.micro"
   ami           = "ami-0b09ffb6d8b58ca91"
@@ -366,3 +384,14 @@ resource "aws_instance" "aws_linux_imported" {
   }
 }
 */
+
+
+resource "aws_instance" "simple_ec2" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "MySimpleEC2"
+  }
+}
